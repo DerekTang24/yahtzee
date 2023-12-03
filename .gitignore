@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+package-lock.json
+/sqlite3_analyzer.exe
+/sqldiff.exe
+/sqlite3.exe
+/start_both_servers.bat
+/start_both_servers.sh
