@@ -1,142 +1,199 @@
-<%- include('../partials/header', {title:"Yahtzee - "+username, username:username}) -%>
+<%- include('../partials/header', {title:"Yahtzee: "+gamename+'|'+username,
+username:username, gamename:gamename}) -%>
 
-  <section id="dice">
-    <table>
-      <tr>
-        <td><img id="die_0" class="die" src="/images/blank.svg" width="70" /></td>
-        <td><img id="die_1" class="die" src="/images/blank.svg" width="70" /></td>
-        <td><img id="die_2" class="die" src="/images/blank.svg" width="70" /></td>
-        <td><img id="die_3" class="die" src="/images/blank.svg" width="70" /></td>
-        <td><img id="die_4" class="die" src="/images/blank.svg" width="70" /></td>
-      </tr>
-      <tr>
-        <td colspan="3">Rolls remaining: <span id="rolls_remaining">3</span></td>
-        <td colspan="2"><button id="roll_button" type="button">Roll the Dice!</button></td>
-      </tr>
-    </table>
-    <br>
-  </section>
+<section id="dice">
+  <table>
+    <tr>
+      <td><img id="die_0" class="die" src="/images/blank.svg" width="70" /></td>
+      <td><img id="die_1" class="die" src="/images/blank.svg" width="70" /></td>
+      <td><img id="die_2" class="die" src="/images/blank.svg" width="70" /></td>
+      <td><img id="die_3" class="die" src="/images/blank.svg" width="70" /></td>
+      <td><img id="die_4" class="die" src="/images/blank.svg" width="70" /></td>
+    </tr>
+    <tr>
+      <td colspan="3">Rolls remaining: <span id="rolls_remaining">3</span></td>
+      <td colspan="2">
+        <button id="roll_button" type="button">Roll the Dice!</button>
+      </td>
+    </tr>
+  </table>
+  <br />
+</section>
 
-  <section id="feedback"></section>
+<section id="feedback"></section>
 
-  <section id="scorecard">
-    <table>
-      <tr>
-        <th>UPPER SECTION</th>
-        <th>HOW TO SCORE</th>
-        <th>#1</th>
-      </tr>
-      <tr>
-        <td>one <img src="/images/one.svg" width="20" /> =1</td>
-        <td>Count and Add Only one</td>
-        <td><input type="text" class="upper category" id="one_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>two <img src="/images/two.svg" width="20" /> =2</td>
-        <td>Count and Add Only two</td>
-        <td><input type="text" class="upper category" id="two_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>three <img src="/images/three.svg" width="20" /> =3</td>
-        <td>Count and Add Only three</td>
-        <td><input type="text" class="upper category" id="three_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>four <img src="/images/four.svg" width="20" /> =4</td>
-        <td>Count and Add Only four</td>
-        <td><input type="text" class="upper category" id="four_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>five <img src="/images/five.svg" width="20" /> =5</td>
-        <td>Count and Add Only five</td>
-        <td><input type="text" class="upper category" id="five_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>six <img src="/images/six.svg" width="20" /> =6</td>
-        <td>Count and Add Only six</td>
-        <td><input type="text" class="upper category" id="six_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>TOTAL SCORE</td>
-        <td> -- </td>
-        <td class="upper score" id="upper_score"></td>
-      </tr>
-      <tr>
-        <td>BONUS</td>
-        <td> If total score is more than 63, score 35 </td>
-        <td class="upper score" id="upper_bonus"></td>
-      </tr>
-      <tr>
-        <td>TOTAL</td>
-        <td> of upper section </td>
-        <td class="upper score" id="upper_total"></td>
-      </tr>
-      <tr>
-        <th>LOWER SECTION</th>
-        <th></th>
-        <th></th>
-      </tr>
-      <tr>
-        <td>3 of a kind</td>
-        <td>Add Total of All Dice</td>
-        <td><input type="text" class="lower category" id="three_of_a_kind_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>4 of a kind</td>
-        <td>Add Total of All Dice</td>
-        <td><input type="text" class="lower category" id="four_of_a_kind_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>Full House</td>
-        <td>Score 25</td>
-        <td><input type="text" class="lower category" id="full_house_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>Small Straight (Sequence of 4)</td>
-        <td>Score 30</td>
-        <td><input type="text" class="lower category" id="small_straight_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>Large Straight (Sequence of 5)</td>
-        <td>Score 40</td>
-        <td><input type="text" class="lower category" id="large_straight_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>Yahtzee (5 of a kind)</td>
-        <td>Score 50</td>
-        <td><input type="text" class="lower category" id="yahtzee_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>Chance</td>
-        <td>Score Total Of all 5 Dice</td>
-        <td><input type="text" class="lower category" id="chance_input" size="3"></td>
-      </tr>
-      <tr>
-        <td>Total (Of Lower Section) </td>
-        <td></td>
-        <td class="lower score" id="lower_score"></td>
-      </tr>
-      <tr>
-        <td>Total (Of Upper Section)</td>
-        <td></td>
-        <td class="lower score" id="upper_total_lower"></td>
-      </tr>
-      <tr>
-        <td>Grand Total </td>
-        <td></td>
-        <td class="lower score" id="grand_total"></td>
-      </tr>
-    </table>
-  </section>
-  <section class="chat">
-    <textarea class="chat" id="chat_textarea">
-    </textarea>
-    <input type="text" class="chat" id="chat_input">
-    <button type="button" class="chat" id="chat_button">Chat</button>
-  </section>
-  <section class="links">
-    <!-- <a href=<%= myVar %> fix this here -->
-  </section>
-  
+<section id="scorecard">
+  <table>
+    <tr>
+      <th>UPPER SECTION</th>
+      <th>HOW TO SCORE</th>
+      <th>#1</th>
+    </tr>
+    <tr>
+      <td>one <img src="/images/one.svg" width="20" /> =1</td>
+      <td>Count and Add Only one</td>
+      <td>
+        <input type="text" class="upper category" id="one_input" size="3" />
+      </td>
+    </tr>
+    <tr>
+      <td>two <img src="/images/two.svg" width="20" /> =2</td>
+      <td>Count and Add Only two</td>
+      <td>
+        <input type="text" class="upper category" id="two_input" size="3" />
+      </td>
+    </tr>
+    <tr>
+      <td>three <img src="/images/three.svg" width="20" /> =3</td>
+      <td>Count and Add Only three</td>
+      <td>
+        <input type="text" class="upper category" id="three_input" size="3" />
+      </td>
+    </tr>
+    <tr>
+      <td>four <img src="/images/four.svg" width="20" /> =4</td>
+      <td>Count and Add Only four</td>
+      <td>
+        <input type="text" class="upper category" id="four_input" size="3" />
+      </td>
+    </tr>
+    <tr>
+      <td>five <img src="/images/five.svg" width="20" /> =5</td>
+      <td>Count and Add Only five</td>
+      <td>
+        <input type="text" class="upper category" id="five_input" size="3" />
+      </td>
+    </tr>
+    <tr>
+      <td>six <img src="/images/six.svg" width="20" /> =6</td>
+      <td>Count and Add Only six</td>
+      <td>
+        <input type="text" class="upper category" id="six_input" size="3" />
+      </td>
+    </tr>
+    <tr>
+      <td>TOTAL SCORE</td>
+      <td>--</td>
+      <td class="upper score" id="upper_score"></td>
+    </tr>
+    <tr>
+      <td>BONUS</td>
+      <td>If total score is more than 63, score 35</td>
+      <td class="upper score" id="upper_bonus"></td>
+    </tr>
+    <tr>
+      <td>TOTAL</td>
+      <td>of upper section</td>
+      <td class="upper score" id="upper_total"></td>
+    </tr>
+    <tr>
+      <th>LOWER SECTION</th>
+      <th></th>
+      <th></th>
+    </tr>
+    <tr>
+      <td>3 of a kind</td>
+      <td>Add Total of All Dice</td>
+      <td>
+        <input
+          type="text"
+          class="lower category"
+          id="three_of_a_kind_input"
+          size="3"
+        />
+      </td>
+    </tr>
+    <tr>
+      <td>4 of a kind</td>
+      <td>Add Total of All Dice</td>
+      <td>
+        <input
+          type="text"
+          class="lower category"
+          id="four_of_a_kind_input"
+          size="3"
+        />
+      </td>
+    </tr>
+    <tr>
+      <td>Full House</td>
+      <td>Score 25</td>
+      <td>
+        <input
+          type="text"
+          class="lower category"
+          id="full_house_input"
+          size="3"
+        />
+      </td>
+    </tr>
+    <tr>
+      <td>Small Straight (Sequence of 4)</td>
+      <td>Score 30</td>
+      <td>
+        <input
+          type="text"
+          class="lower category"
+          id="small_straight_input"
+          size="3"
+        />
+      </td>
+    </tr>
+    <tr>
+      <td>Large Straight (Sequence of 5)</td>
+      <td>Score 40</td>
+      <td>
+        <input
+          type="text"
+          class="lower category"
+          id="large_straight_input"
+          size="3"
+        />
+      </td>
+    </tr>
+    <tr>
+      <td>Yahtzee (5 of a kind)</td>
+      <td>Score 50</td>
+      <td>
+        <input type="text" class="lower category" id="yahtzee_input" size="3" />
+      </td>
+    </tr>
+    <tr>
+      <td>Chance</td>
+      <td>Score Total Of all 5 Dice</td>
+      <td>
+        <input type="text" class="lower category" id="chance_input" size="3" />
+      </td>
+    </tr>
+    <tr>
+      <td>Total (Of Lower Section)</td>
+      <td></td>
+      <td class="lower score" id="lower_score"></td>
+    </tr>
+    <tr>
+      <td>Total (Of Upper Section)</td>
+      <td></td>
+      <td class="lower score" id="upper_total_lower"></td>
+    </tr>
+    <tr>
+      <td>Grand Total</td>
+      <td></td>
+      <td class="lower score" id="grand_total"></td>
+    </tr>
+  </table>
+</section>
+<section class="chat">
+  <textarea class="chat" id="chat_textarea"> </textarea>
+  <input type="text" class="chat" id="chat_input" />
+  <button type="button" class="chat" id="chat_button">Chat</button>
+</section>
+<section class="links">
+  <a href="<%= '/games/' + username %>" class="links" id="my_games_link"
+    >My Games</a
+  >
+  <a href="<%= '/users/' + username %>" class="links" id="user_details_link"
+    >My Details</a
+  >
+</section>
 
-  <%- include('../partials/footer') -%>
+<%- include('../partials/footer') -%>

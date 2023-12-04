@@ -78,12 +78,12 @@ class Scorecard:
                 }
 
             scorecard_id = random.randint(
-                0, 9223372036854775807
+                0, 9007199254740991
             )  # non-negative range of SQLITE3 INTEGER
             # check to see if exists already!!
             while self.exists(id=scorecard_id)["message"]:
                 scorecard_id = random.randint(
-                    0, 9223372036854775807
+                    0, 9007199254740991
                 )  # non-negative range of SQLITE3 INTEGER
 
             scorecard_data = (

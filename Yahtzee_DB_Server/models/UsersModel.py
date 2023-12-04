@@ -43,12 +43,12 @@ class User:
                 }
 
             user_id = random.randint(
-                0, 9223372036854775807
+                0, 9007199254740991
             )  # non-negative range of SQLITE3 INTEGER
             # check to see if exists already!!
             while self.exists(id=user_id)["message"]:
                 user_id = random.randint(
-                    0, 9223372036854775807
+                    0, 9007199254740991
                 )  # non-negative range of SQLITE3 INTEGER
             user_data = (
                 user_id,
