@@ -34,9 +34,10 @@ class Game:
             cursor = db_connection.cursor()
             if (
                 set(game_details.keys()) != set(["name", "name"])
-                or not re.match("^[A-Za-z0-9]*$", game_details["name"])
+                or game_details["name"].strip() == ""
+                or not re.match("^[A-Za-z0-9_]*$", game_details["name"])
                 or not re.match(
-                    "^[A-Za-z0-9]*$",
+                    "^[A-Za-z0-9_]*$",
                     game_details["name"],
                 )
             ):
@@ -73,7 +74,8 @@ class Game:
             return {"result": "success", "message": self.oneToDict(game_data)}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            print(str(error))
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -103,7 +105,7 @@ class Game:
             return {"result": "success", "message": self.oneToDict(res)}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -120,7 +122,7 @@ class Game:
             return {"result": "success", "message": self.manyToDict(res)}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -147,7 +149,7 @@ class Game:
             return {"result": "success", "message": res != None}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -164,7 +166,7 @@ class Game:
             return {"result": "success", "message": res[3] != res[4]}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -198,7 +200,7 @@ class Game:
             return {"result": "success", "message": res["message"]}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -219,7 +221,7 @@ class Game:
             return {"result": "success", "message": res["message"]}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()

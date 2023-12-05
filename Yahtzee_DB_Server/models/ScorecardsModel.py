@@ -106,7 +106,7 @@ class Scorecard:
             return {"result": "success", "message": self.oneToDict(scorecard_data)}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -125,7 +125,7 @@ class Scorecard:
             return {"result": "success", "message": self.oneToDict(res)}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -144,7 +144,7 @@ class Scorecard:
             return {"result": "success", "message": self.manyToDict(res)}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -161,7 +161,7 @@ class Scorecard:
             return {"result": "success", "message": self.manyToDict(res)}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -182,7 +182,7 @@ class Scorecard:
                 return {"result": "error", "message": "User has no games"}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -203,7 +203,7 @@ class Scorecard:
                 return {"result": "error", "message": "User has no scorecards"}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -230,7 +230,7 @@ class Scorecard:
             return {"result": "success", "message": res != None}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -247,7 +247,7 @@ class Scorecard:
             return {"result": "success", "message": res[3] != res[4]}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -275,7 +275,7 @@ class Scorecard:
             return {"result": "success", "message": res["message"]}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -294,7 +294,7 @@ class Scorecard:
             return {"result": "success", "message": res["message"]}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()

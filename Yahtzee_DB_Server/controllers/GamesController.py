@@ -24,7 +24,9 @@ def games():
         return jsonify(Game.get_games()["message"])
 
     elif request.method == "POST":
-        return jsonify(Game.create_game(request.json)["message"])
+        res = Game.create_game(request.json)
+        print("post games", request.json, res)
+        return jsonify(res["message"])
     else:
         return {}
 

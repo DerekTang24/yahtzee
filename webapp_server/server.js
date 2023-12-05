@@ -20,9 +20,9 @@ app.get("/", async function (request, response) {
   console.log(request.method, request.url); //event logging
 
   //-------------------Testing purposes: Verifying users actually exist in DB------------//
-  let url = "http://127.0.0.1:5000/users";
-  let res = await fetch(url);
-  let details = JSON.parse(await res.text());
+  const url = "http://127.0.0.1:5000/users";
+  const res = await fetch(url);
+  const details = JSON.parse(await res.text());
   console.log("All Users in DB:");
   console.log(details);
   //-----------------------------------//
@@ -58,31 +58,47 @@ app.get("/users/:username", async function (request, response) {
   });
 });
 
-app.get("/games/:gamename/:username", async function (request, response) {
-  gamename = request.params.gamename;
-  username = request.params.username;
+app.get("/games/:game_name/:username", async function (request, response) {
+  const game_name = request.params.game_name;
+  const username = request.params.username;
   // add link
-  console.log("games/:gamename/:username", request.method, request.url, request.params); //event logging
+  console.log(
+    "games/:game_name/:username",
+    request.method,
+    request.url,
+    request.params
+  ); //event logging
 
   response.status(200);
   response.setHeader("Content-Type", "text/html");
   response.render("game/game", {
     feedback: "",
     username,
-    gamename,
+    game_name,
   });
 });
 
 app.get("/games/:username", async function (request, response) {
-  username = request.params.username;
+  const username = request.params.username;
+  const feedback = request.query.feedback;
   // add link
   console.log("games/:username", request.method, request.url, request.params); //event logging
+  const games_url = "http://127.0.0.1:5000/users/games/" + username;
+  const games_res = await fetch(games_url);
+  const games = JSON.parse(await games_res.text());
+  console.log("games", games);
 
+  const scores_url = "http://127.0.0.1:5000/scores/" + username;
+  const scores_res = await fetch(scores_url);
+  const scores = JSON.parse(await scores_res.text());
+  console.log("scores", scores);
   response.status(200);
   response.setHeader("Content-Type", "text/html");
   response.render("game/game_details", {
-    feedback: "",
+    feedback: feedback === "invalid" ? "invalid name" : "",
     username,
+    games: games.map((e) => e.name),
+    scores: scores.map((e) => e.score),
   });
 });
 
@@ -90,13 +106,13 @@ app.get("/login", async function (request, response) {
   console.log(request.method, request.url); //event logging
 
   //Get user login info from query string portion of url
-  let username = request.query.username;
-  let password = request.query.password;
+  const username = request.query.username;
+  const password = request.query.password;
   if (username && password) {
     //get alleged user
-    let url = "http://127.0.0.1:5000/users/" + username;
-    let res = await fetch(url);
-    let details = JSON.parse(await res.text());
+    const url = "http://127.0.0.1:5000/users/" + username;
+    const res = await fetch(url);
+    const details = JSON.parse(await res.text());
     console.log("Requested user per username:");
     console.log(details);
 
@@ -104,10 +120,7 @@ app.get("/login", async function (request, response) {
     if (details["password"] && details["password"] == password) {
       response.status(200);
       response.setHeader("Content-Type", "text/html");
-      response.render("game/game_details", {
-        feedback: "",
-        username: username,
-      });
+      response.redirect("/users/" + username);
     } else if (details["password"] && details["password"] != password) {
       response.status(401); //401 Unauthorized
       response.setHeader("Content-Type", "text/html");
@@ -130,13 +143,52 @@ app.get("/login", async function (request, response) {
   }
 }); //GET /login
 
+app.get(
+  "/games/delete/:game_name/:username",
+  async function (request, response) {
+    console.log(request.method, request.url); //event logging
+    const game_name = request.params.game_name;
+    const username = request.params.username;
+
+    const games_url = "http://127.0.0.1:5000/games/scorecards/" + game_name;
+    const games_res = await fetch(games_url);
+    const scorecards = JSON.parse(await games_res.text());
+
+    scorecards
+      .map((e) => e.id)
+      .forEach(async (card_id) => {
+        const scorecard_url = "http://127.0.0.1:5000/scorecards/" + card_id;
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        const scorecard_res = await fetch(scorecard_url, {
+          method: "DELETE",
+          headers,
+        });
+      });
+
+    const url = "http://127.0.0.1:5000/games/" + game_name;
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers,
+    });
+
+    response.status(200);
+    response.setHeader("Content-Type", "text/html");
+    response.redirect("/games/" + username);
+  }
+);
+
 app.post("/users", async function (request, response) {
   console.log(request.method, request.url); //event logging
 
   //Get user information from body of POST request
-  let username = request.body.username;
-  let email = request.body.email;
-  let password = request.body.password;
+  const username = request.body.username;
+  const email = request.body.email;
+  const password = request.body.password;
   // HEADs UP: You really need to validate this information!
   console.log("Info recieved:", username, email, password);
 
@@ -144,23 +196,74 @@ app.post("/users", async function (request, response) {
   const headers = {
     "Content-Type": "application/json",
   };
-  let res = await fetch(url, {
+  const res = await fetch(url, {
     method: "POST",
     headers: headers,
     body: JSON.stringify(request.body),
   });
 
-  let posted_user = await res.text();
-  let details = JSON.parse(posted_user);
+  const posted_user = await res.text();
+  const details = JSON.parse(posted_user);
   console.log("Returned user:", details);
 
   response.status(200);
   response.setHeader("Content-Type", "text/html");
-  response.render("game/game_details", {
-    feedback: "",
-    username: username,
-  });
+  response.redirect("/users/" + username);
 }); //POST /user
+
+app.post("/games", async function (request, response) {
+  console.log(request.method, request.url, request.body); //event logging
+
+  //Get game information from body of POST request
+  const username = request.body.username;
+  const game_name = request.body.game_name;
+
+  // HEADs UP: You really need to validate this information!
+  console.log("Info recieved:", username, game_name);
+
+  const game_url = "http://127.0.0.1:5000/games";
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  const game_res = await fetch(game_url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ name: game_name }),
+  });
+
+  const posted_game = await game_res.text();
+  const game = JSON.parse(posted_game);
+  if (
+    game === "UNIQUE constraint failed: games.link" ||
+    game === "game details is of the wrong format"
+  ) {
+    response.status(401);
+    response.setHeader("Content-Type", "text/html");
+    response.redirect("/games/" + username + "?feedback=invalid");
+    return;
+  }
+
+  console.log("Returned game:", game);
+
+  const user_url = "http://127.0.0.1:5000/users/" + username;
+  const user_res = await fetch(user_url);
+  const user = JSON.parse(await user_res.text());
+
+  const scorecard_url = "http://127.0.0.1:5000/scorecards";
+  const scorecard_res = await fetch(scorecard_url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ game_id: game.id, user_id: user.id, turn_order: 1 }),
+  });
+
+  const posted_scorecard = await scorecard_res.text();
+  const scorecard = JSON.parse(posted_scorecard);
+  console.log("Returned scorecard:", scorecard);
+
+  response.status(200);
+  response.setHeader("Content-Type", "text/html");
+  response.redirect("/games/" + username);
+}); //POST /games
 
 // Because routes/middleware are applied in order,
 // this will act as a default error route in case of

@@ -25,7 +25,7 @@ def scorecards():
         return jsonify(Scorecard.get_scorecards()["message"])
 
     elif request.method == "POST":
-        print(request.json)
+        print("post scorecards", request.json)
         return jsonify(
             Scorecard.create_scorecard(
                 request.json["game_id"],

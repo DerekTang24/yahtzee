@@ -68,7 +68,7 @@ class User:
             return {"result": "success", "message": user_copy}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -98,7 +98,7 @@ class User:
             return {"result": "success", "message": self.oneToDict(res)}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -115,7 +115,7 @@ class User:
             return {"result": "success", "message": self.manyToDict(res)}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -142,7 +142,7 @@ class User:
             return {"result": "success", "message": res != None}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -171,7 +171,7 @@ class User:
             return {"result": "success", "message": res["message"]}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
@@ -190,7 +190,7 @@ class User:
             return {"result": "success", "message": res["message"]}
 
         except sqlite3.Error as error:
-            return {"result": "error", "message": error}
+            return {"result": "error", "message": f"{error}"}
 
         finally:
             db_connection.close()
