@@ -10,13 +10,6 @@
   <button type="submit">Create Account</button>
 </form>
 <span id="feedback"><%=feedback%></span></br>
-<section class="links">
-  <a href="<%= '/games/' + username %>" class="links" id="my_games_link">My Games</a>
-  <a
-    href="<%= '/users/' + username %>"
-    class="links"
-    id="user_details_link"
-  >My Details</a>
-</section>
 
-  <%- include('../partials/footer') -%>
+<%- include('../partials/links') -%>
+<%- include('../partials/footer') -%>

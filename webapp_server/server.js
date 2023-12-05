@@ -62,7 +62,7 @@ app.get("/games/:gamename/:username", async function (request, response) {
   gamename = request.params.gamename;
   username = request.params.username;
   // add link
-  console.log("games", request.method, request.url, request.params); //event logging
+  console.log("games/:gamename/:username", request.method, request.url, request.params); //event logging
 
   response.status(200);
   response.setHeader("Content-Type", "text/html");
@@ -70,6 +70,19 @@ app.get("/games/:gamename/:username", async function (request, response) {
     feedback: "",
     username,
     gamename,
+  });
+});
+
+app.get("/games/:username", async function (request, response) {
+  username = request.params.username;
+  // add link
+  console.log("games/:username", request.method, request.url, request.params); //event logging
+
+  response.status(200);
+  response.setHeader("Content-Type", "text/html");
+  response.render("game/game_details", {
+    feedback: "",
+    username,
   });
 });
 

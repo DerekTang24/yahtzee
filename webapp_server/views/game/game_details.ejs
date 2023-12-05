@@ -1,6 +1,12 @@
 <%- include('../partials/header', {title:"Yahtzee: My Games", username:username}) -%>
 
 <h2>My Games - <%=username%></h2>
-
+<form action="/games" method="POST">
+  <label for="game_name_input">Game Name:</label>
+  <input id="game_name_input" type="text" name="game_name"  /> <br />
+  <button type="submit">Create Account</button>
+  <input id="username_input" type="hidden" name="username" value="<%=username%>" />
+</form>
+<span id="feedback"><%=feedback%></span></br>
 
 <%- include('../partials/footer') -%>

@@ -187,13 +187,5 @@ username:username, gamename:gamename}) -%>
   <input type="text" class="chat" id="chat_input" />
   <button type="button" class="chat" id="chat_button">Chat</button>
 </section>
-<section class="links">
-  <a href="<%= '/games/' + username %>" class="links" id="my_games_link"
-    >My Games</a
-  >
-  <a href="<%= '/users/' + username %>" class="links" id="user_details_link"
-    >My Details</a
-  >
-</section>
-
+<%- include('../partials/links') -%>
 <%- include('../partials/footer') -%>
