@@ -43,20 +43,68 @@ app.get("/users", async function (request, response) {
   response.render("user/user_details", {
     feedback: "",
     username: "",
+    games: [],
   });
 });
 
 app.get("/users/:username", async function (request, response) {
   console.log(request.method, request.url); //event logging
   username = request.params.username;
+    // add link
+    console.log("users/:username", request.method, request.url, request.params); //event logging
+    const games_url = "http://127.0.0.1:5000/users/games/" + username;
+    const games_res = await fetch(games_url);
+    const games = JSON.parse(await games_res.text());
+    console.log("games", games);
 
   response.status(200);
   response.setHeader("Content-Type", "text/html");
   response.render("user/user_details", {
     feedback: "",
-    username: "",
+    username,
+    games: games.map((e) => e.name),
   });
 });
+
+app.get("/users/delete/:username", async function (request, response) {
+  console.log(request.method, request.url); //event logging
+  const username = request.params.username;
+  const games_url = "http://127.0.0.1:5000/users/games/" + username;
+  const games_res = await fetch(games_url);
+  const games = JSON.parse(await games_res.text());
+
+  console.log("games", games)
+
+  games
+    .forEach(async (e) => {
+      const get_scorecard_url = "http://127.0.0.1:5000/games/scorecards/" + e.name;
+      const get_scorecard_res = await fetch(get_scorecard_url);
+      const scorecard = JSON.parse(await get_scorecard_res.text());
+      const delete_scorecard_url = "http://127.0.0.1:5000/scorecards/" + scorecard.id;
+      const headers = {
+        "Content-Type": "application/json",
+      };
+      const delete_scorecard_res = await fetch(delete_scorecard_url, {
+        method: "DELETE",
+        headers,
+      });
+    });
+
+  const url = "http://127.0.0.1:5000/users/" + username;
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  const res = await fetch(url, {
+    method: "DELETE",
+    headers,
+  });
+
+  response.status(200);
+  response.setHeader("Content-Type", "text/html");
+  response.redirect("/login")
+});
+
+
 
 app.get("/games/:game_name/:username", async function (request, response) {
   const game_name = request.params.game_name;

@@ -7,9 +7,19 @@
   <input id="email_input" type="email" name="email"  /> <br />
   <label for="password_input">password:</label>
   <input id="password_input" type="text" name="password"  /> <br />
-  <button type="submit">Create Account</button>
+  <a id="delete_link" href="/users/delete/<%=username %>">Delete</a>
+  <button id="create_button" type="submit">Create Account</button>
 </form>
-<span id="feedback"><%=feedback%></span></br>
+<ol class="user_games" id="user_games_ol">
+  <% if (games.length !== 0) { %>
+    Games <% for (const game of games) { %>
+      <li class="user_games" id="user_game">
+        <a href="/games/<%=game %>/<%=username %>" class="user_games" id="game_link_<%=game %>"><%=game %></a>
+      </li>
+    <% } %>
+  <% } %>
+</ol>
+<section id="feedback"><%=feedback%></section></br>
 
 <%- include('../partials/links') -%>
 <%- include('../partials/footer') -%>

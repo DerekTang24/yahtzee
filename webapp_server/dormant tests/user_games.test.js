@@ -185,6 +185,7 @@ describe("user_games.html", () => {
 
       let found = false;
       for (let game of all_games) {
+        console.log("game name", game.name)
         if (game.name == new_game_name) {
           found = true;
           break;
