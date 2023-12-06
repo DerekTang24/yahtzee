@@ -2,11 +2,11 @@
 
 <form action="/users" method="POST">
   <label for="username_input">username:</label>
-  <input id="username_input" type="text" name="username"  /> <br />
+  <input id="username_input" type="text" name="username" value="<%=username %>" /> <br />
   <label for="email_input">email:</label>
-  <input id="email_input" type="email" name="email"  /> <br />
+  <input id="email_input" type="email" name="email" value="<%=email %>" /> <br />
   <label for="password_input">password:</label>
-  <input id="password_input" type="text" name="password"  /> <br />
+  <input id="password_input" type="text" name="password" value="<%=password %>" /> <br />
   <a id="delete_link" href="/users/delete/<%=username %>">Delete</a>
   <button id="create_button" type="submit">Create Account</button>
 </form>

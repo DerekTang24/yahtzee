@@ -101,6 +101,8 @@ def scores():
 
 def scores_user(username):
     if request.method == "GET":
+        user = User.get_user(username=username)
+        print("scores_user user", user)
         res = Scorecard.get_scorecards_by_user(
             user_id=User.get_user(username=username)["message"]["id"]
         )

@@ -33,6 +33,7 @@ app.get("/", async function (request, response) {
     feedback: "",
     username: "",
   });
+  return;
 });
 
 app.get("/users", async function (request, response) {
@@ -43,6 +44,8 @@ app.get("/users", async function (request, response) {
   response.render("user/user_details", {
     feedback: "",
     username: "",
+    email: "",
+    password: "",
     games: [],
   });
 });
@@ -50,20 +53,28 @@ app.get("/users", async function (request, response) {
 app.get("/users/:username", async function (request, response) {
   console.log(request.method, request.url); //event logging
   username = request.params.username;
-    // add link
-    console.log("users/:username", request.method, request.url, request.params); //event logging
-    const games_url = "http://127.0.0.1:5000/users/games/" + username;
-    const games_res = await fetch(games_url);
-    const games = JSON.parse(await games_res.text());
-    console.log("games", games);
+  // add link
+  console.log("users/:username", request.method, request.url, request.params); //event logging
+  const games_url = "http://127.0.0.1:5000/users/games/" + username;
+  const games_res = await fetch(games_url);
+  const games = JSON.parse(await games_res.text());
+  console.log("games", games);
+
+  const user_url = "http://127.0.0.1:5000/users/" + username;
+  const user_res = await fetch(user_url);
+  const user = JSON.parse(await user_res.text());
+  console.log("user details", user);
 
   response.status(200);
   response.setHeader("Content-Type", "text/html");
   response.render("user/user_details", {
     feedback: "",
     username,
+    email: user.email,
+    password: user.password,
     games: games.map((e) => e.name),
   });
+  return;
 });
 
 app.get("/users/delete/:username", async function (request, response) {
@@ -73,22 +84,23 @@ app.get("/users/delete/:username", async function (request, response) {
   const games_res = await fetch(games_url);
   const games = JSON.parse(await games_res.text());
 
-  console.log("games", games)
+  console.log("games", games);
 
-  games
-    .forEach(async (e) => {
-      const get_scorecard_url = "http://127.0.0.1:5000/games/scorecards/" + e.name;
-      const get_scorecard_res = await fetch(get_scorecard_url);
-      const scorecard = JSON.parse(await get_scorecard_res.text());
-      const delete_scorecard_url = "http://127.0.0.1:5000/scorecards/" + scorecard.id;
-      const headers = {
-        "Content-Type": "application/json",
-      };
-      const delete_scorecard_res = await fetch(delete_scorecard_url, {
-        method: "DELETE",
-        headers,
-      });
+  games.forEach(async (e) => {
+    const get_scorecard_url =
+      "http://127.0.0.1:5000/games/scorecards/" + e.name;
+    const get_scorecard_res = await fetch(get_scorecard_url);
+    const scorecard = JSON.parse(await get_scorecard_res.text());
+    const delete_scorecard_url =
+      "http://127.0.0.1:5000/scorecards/" + scorecard[0].id;
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const delete_scorecard_res = await fetch(delete_scorecard_url, {
+      method: "DELETE",
+      headers,
     });
+  });
 
   const url = "http://127.0.0.1:5000/users/" + username;
   const headers = {
@@ -101,10 +113,8 @@ app.get("/users/delete/:username", async function (request, response) {
 
   response.status(200);
   response.setHeader("Content-Type", "text/html");
-  response.redirect("/login")
+  response.redirect("/login");
 });
-
-
 
 app.get("/games/:game_name/:username", async function (request, response) {
   const game_name = request.params.game_name;
@@ -166,9 +176,23 @@ app.get("/login", async function (request, response) {
 
     //Verify user password matches
     if (details["password"] && details["password"] == password) {
+      const games_url = "http://127.0.0.1:5000/users/games/" + username;
+      const games_res = await fetch(games_url);
+      const games = JSON.parse(await games_res.text());
+      console.log("games", games);
+
+      const scores_url = "http://127.0.0.1:5000/scores/" + username;
+      const scores_res = await fetch(scores_url);
+      const scores = JSON.parse(await scores_res.text());
+      console.log("scores", scores);
       response.status(200);
       response.setHeader("Content-Type", "text/html");
-      response.redirect("/users/" + username);
+      response.render("game/game_details", {
+        feedback: "",
+        username,
+        games: games.map((e) => e.name),
+        scores: scores.map((e) => e.score),
+      });
     } else if (details["password"] && details["password"] != password) {
       response.status(401); //401 Unauthorized
       response.setHeader("Content-Type", "text/html");
@@ -239,24 +263,74 @@ app.post("/users", async function (request, response) {
   const password = request.body.password;
   // HEADs UP: You really need to validate this information!
   console.log("Info recieved:", username, email, password);
+  if (username && email && password) {
+    //get alleged user
 
-  const url = "http://127.0.0.1:5000/users";
-  const headers = {
-    "Content-Type": "application/json",
-  };
-  const res = await fetch(url, {
-    method: "POST",
-    headers: headers,
-    body: JSON.stringify(request.body),
-  });
+    const url = "http://127.0.0.1:5000/users";
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    const res = await fetch(url, {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(request.body),
+    });
 
-  const posted_user = await res.text();
-  const details = JSON.parse(posted_user);
-  console.log("Returned user:", details);
+    const posted_user = await res.text();
+    const details = JSON.parse(posted_user);
+    console.log("Returned user:", details);
+    console.log(details);
 
-  response.status(200);
-  response.setHeader("Content-Type", "text/html");
-  response.redirect("/users/" + username);
+    if (details === "User details is of the wrong format") {
+      response.status(401); //401 Unauthorized
+      response.setHeader("Content-Type", "text/html");
+      response.render("user/user_details", {
+        feedback: "Invalid details format",
+        username,
+        email: "",
+        password: "",
+        games: [],
+      });
+      return;
+    } else if (details === "UNIQUE constraint failed: users.email") {
+      response.status(401); //401 Unauthorized
+      response.setHeader("Content-Type", "text/html");
+      response.render("user/user_details", {
+        feedback: "That email already exists",
+        username,
+        email: "",
+        password: "",
+        games: [],
+      });
+      return;
+    } else if (details === "UNIQUE constraint failed: users.username") {
+      response.status(401); //401 Unauthorized
+      response.setHeader("Content-Type", "text/html");
+      response.render("user/user_details", {
+        feedback: "That username already exists",
+        username,
+        email: "",
+        password: "",
+        games: [],
+      });
+      return;
+    } else {
+      response.status(200);
+      response.setHeader("Content-Type", "text/html");
+      response.redirect("/games/" + username);
+    }
+  } else {
+    response.status(401); //401 Unauthorized
+    response.setHeader("Content-Type", "text/html");
+    response.render("user/user_details", {
+      feedback: "Please provide both a username and password",
+      username,
+      email: "",
+      password: "",
+      games: [],
+    });
+    return;
+  }
 }); //POST /user
 
 app.post("/games", async function (request, response) {
@@ -324,6 +398,7 @@ app.use("", function (request, response) {
     feedback: "",
     username: "",
   });
+  return;
 });
 
 //..............Start the server...............................//
