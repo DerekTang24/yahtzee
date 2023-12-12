@@ -318,6 +318,7 @@ app.post("/users", async function (request, response) {
       response.status(200);
       response.setHeader("Content-Type", "text/html");
       response.redirect("/games/" + username);
+      return
     }
   } else {
     response.status(401); //401 Unauthorized
