@@ -9,7 +9,7 @@ import sys
 from controllers import UsersController, GamesController, ScorecardsController
 from models import GamesModel, ScorecardsModel, UsersModel
 
-yahtzee_db_name = f"{os.getcwd()}/models/yahtzeeDB.db"
+yahtzee_db_name = f"{os.getcwd()}\models\yahtzeeDB.db"
 print("test_UsersController DB location:", yahtzee_db_name)
 User = UsersModel.User(yahtzee_db_name)
 Game = GamesModel.Game(yahtzee_db_name)

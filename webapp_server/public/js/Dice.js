@@ -24,7 +24,7 @@ class Dice {
    */
   get_values() {
     return this.dice_elements.map((e) => {
-      this.photo_names.indexOf(e.getAttribute("src").slice(7, -4));
+      return this.photo_names.indexOf(e.getAttribute("src").slice(8, -4));
     });
   }
 
@@ -45,9 +45,9 @@ class Dice {
    * @return {Array} an array of six integers representing counts of the six die faces
    */
   get_counts() {
-    const arr = [0, 0, 0, 0, 0, 0, 0];
+    const arr = [0, 0, 0, 0, 0, 0];
     this.get_values().forEach((e) => {
-      arr[e]++;
+      arr[e - 1]++;
     });
     return arr;
   }
@@ -58,9 +58,15 @@ class Dice {
    * <br> Uses this.set to update dice
    */
   roll() {
+    const values = [...this.get_values()];
     this.dice_elements.forEach((e, index) => {
-      Math.floor(Math.random() * 6 + 1);
+      if (e.classList.contains("reserved")) {
+        values[index] = -1;
+      } else {
+        values[index] = Math.floor(Math.random() * 6 + 1);
+      }
     });
+    this.set(values, this.get_rolls_remaining() - 1);
   }
 
   /**
@@ -82,7 +88,12 @@ class Dice {
    * @param {Object} element the <img> element representing the die to reserve
    */
   reserve(die_element) {
-    die_element.classList.toggle("reserved");
+    if (
+      this.get_rolls_remaining() !== 0 &&
+      die_element.getAttribute("src") !== "/images/blank.svg"
+    ) {
+      die_element.classList.toggle("reserved");
+    }
     return;
   }
 
