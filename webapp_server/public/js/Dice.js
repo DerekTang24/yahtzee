@@ -58,14 +58,20 @@ class Dice {
    * <br> Uses this.set to update dice
    */
   roll() {
-    
+    this.dice_elements.forEach((e, index) => {
+      Math.floor(Math.random() * 6 + 1);
+    });
   }
 
   /**
    * Resets all dice_element pictures to blank, and unreserved
    * <br> Uses this.#setDice to update dice
    */
-  reset() {}
+  reset() {
+    this.dice_elements.forEach((e) => e.classList.remove("resersved"));
+    this.set([0, 0, 0, 0, 0], 3);
+    return;
+  }
 
   /**
    * Performs all necessary actions to reserve/unreserve a particular die
@@ -75,7 +81,10 @@ class Dice {
    *
    * @param {Object} element the <img> element representing the die to reserve
    */
-  reserve(die_element) {}
+  reserve(die_element) {
+    die_element.classList.toggle("reserved");
+    return;
+  }
 
   /**
    * A useful testing method to conveniently change dice / rolls remaining
@@ -86,7 +95,15 @@ class Dice {
    * @param {Number} new_rolls_remaining an integer representing the new value for rolls remaining
    *
    */
-  set(new_dice_values, new_rolls_remaining) {}
+  set(new_dice_values, new_rolls_remaining) {
+    this.dice_elements.forEach((e, index) => {
+      if (new_dice_values[index] !== -1) {
+        e.src = `/images/${this.photo_names[new_dice_values[index]]}.svg`;
+      }
+    });
+    this.rolls_remaining_element.innerHTML = new_rolls_remaining;
+    return;
+  }
 }
 
 export default Dice;
