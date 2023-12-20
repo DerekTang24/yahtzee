@@ -1,6 +1,6 @@
 console.log("UI.js connected");
 import Dice from "./Dice.js";
-//import Scorecard from './Scorecard.js';
+import Scorecard from "./Scorecard.js";
 
 //-------Dice Setup--------//
 let roll_button = document.getElementById("roll_button");
@@ -26,8 +26,8 @@ for (let category of category_elements) {
   });
 }
 let score_elements = Array.from(document.getElementsByClassName("score"));
-//let scorecard = new Scorecard(category_elements, score_elements, dice);
-//window.scorecard = scorecard;
+let scorecard = new Scorecard(category_elements, score_elements, dice);
+window.scorecard = scorecard;
 
 //---------Event Handlers-------//
 function reserve_die_handler(event) {
