@@ -23,7 +23,7 @@ class Dice {
    * @return {Array} an array of integers representing dice values of dice pictures
    */
   get_values() {
-    return this.dice_elements.map((e) => {
+    return this.dice_elements.map((element) => {
       return this.photo_names.indexOf(e.getAttribute("src").slice(8, -4));
     });
   }
@@ -46,8 +46,8 @@ class Dice {
    */
   get_counts() {
     const arr = [0, 0, 0, 0, 0, 0];
-    this.get_values().forEach((e) => {
-      arr[e - 1]++;
+    this.get_values().forEach((element) => {
+      arr[element - 1]++;
     });
     return arr;
   }
@@ -59,8 +59,8 @@ class Dice {
    */
   roll() {
     const values = [...this.get_values()];
-    this.dice_elements.forEach((e, index) => {
-      if (e.classList.contains("reserved")) {
+    this.dice_elements.forEach((element, index) => {
+      if (element.classList.contains("reserved")) {
         values[index] = -1;
       } else {
         values[index] = Math.floor(Math.random() * 6 + 1);
@@ -74,7 +74,9 @@ class Dice {
    * <br> Uses this.#setDice to update dice
    */
   reset() {
-    this.dice_elements.forEach((e) => e.classList.remove("resersved"));
+    this.dice_elements.forEach((element) =>
+      element.classList.remove("resersved")
+    );
     this.set([0, 0, 0, 0, 0], 3);
     return;
   }
@@ -107,9 +109,9 @@ class Dice {
    *
    */
   set(new_dice_values, new_rolls_remaining) {
-    this.dice_elements.forEach((e, index) => {
+    this.dice_elements.forEach((element, index) => {
       if (new_dice_values[index] !== -1) {
-        e.src = `/images/${this.photo_names[new_dice_values[index]]}.svg`;
+        element.src = `/images/${this.photo_names[new_dice_values[index]]}.svg`;
       }
     });
     this.rolls_remaining_element.innerHTML = new_rolls_remaining;

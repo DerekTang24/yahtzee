@@ -11,9 +11,7 @@ class Scorecard {
    *
    * @return {Boolean} a Boolean value indicating whether the scorecard is full
    */
-  is_finished() {
-    
-  }
+  is_finished() {}
 
   /**
    * Validates a score for a particular category
@@ -96,7 +94,11 @@ class Scorecard {
      * @return {Object} an object version of the scorecard
      *
      */
-  to_object() {}
+  to_object() {
+    this.category_elements.array.forEach((element) => {
+      
+    });
+  }
 }
 
 export default Scorecard;
