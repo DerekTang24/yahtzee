@@ -36,8 +36,12 @@ function reserve_die_handler(event) {
 }
 
 function roll_dice_handler() {
-  display_feedback("Rolling the dice...", "good");
-  dice.roll();
+  if (dice.get_rolls_remaining() > 0) {
+    display_feedback("Rolling the dice...", "good");
+    dice.roll();
+  } else {
+    display_feedback("Out of rolls", "bad");
+  }
 
   console.log("Dice values:", dice.get_values());
   console.log("Sum of all dice:", dice.get_sum());
@@ -46,6 +50,11 @@ function roll_dice_handler() {
 
 function enter_score_handler(event) {
   console.log("Score entry attempted for: ", event.target.id);
+  if (scorecard.is_valid_score(event.target, parseInt(event.target.value))) {
+    event.target.disabled = true;
+    scorecard.update_scores();
+    dice.reset();
+  }
 }
 
 //------Feedback ---------//

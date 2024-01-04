@@ -24,7 +24,7 @@ class Dice {
    */
   get_values() {
     return this.dice_elements.map((element) => {
-      return this.photo_names.indexOf(e.getAttribute("src").slice(8, -4));
+      return this.photo_names.indexOf(element.getAttribute("src").slice(8, -4));
     });
   }
 
