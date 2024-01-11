@@ -76,3 +76,7 @@ footer {
   font-size: 50%;
   text-align: center;
 }
+
+.reserved {
+  border: 2px solid blue;
+}

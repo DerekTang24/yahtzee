@@ -57,9 +57,30 @@ class Scorecard {
         }
         return two && three && value === 25;
       case "small_straight":
-        return Math.max(...dice_counts) <= 2 && value === 30;
+        if (value !== 30) {
+          return false;
+        }
+        if (
+          dice_counts == [1, 1, 1, 1, 0, 0] ||
+          dice_counts == [0, 1, 1, 1, 1, 0] ||
+          dice_counts == [0, 0, 1, 1, 1, 1]
+        ) {
+          return true;
+        } else {
+          return false;
+        }
       case "large_straight":
-        return Math.max(...dice_counts) === 1 && value === 40;
+        if (value !== 40) {
+          return false;
+        }
+        if (
+          dice_counts == [1, 1, 1, 1, 1, 0] ||
+          dice_counts == [0, 1, 1, 1, 1, 1]
+        ) {
+          return true;
+        } else {
+          return false;
+        }
       case "yahtzee":
         return Math.max(...dice_counts) === 5 && value === 50;
       case "chance":

@@ -1,6 +1,7 @@
 console.log("UI.js connected");
 import Dice from "./Dice.js";
 import Scorecard from "./Scorecard.js";
+const feedback = document.getElementById("feedback");
 
 //-------Dice Setup--------//
 let roll_button = document.getElementById("roll_button");
@@ -26,13 +27,20 @@ for (let category of category_elements) {
   });
 }
 let score_elements = Array.from(document.getElementsByClassName("score"));
-let scorecard = new Scorecard(category_elements, score_elements, dice);
+const scorecard = new Scorecard(category_elements, score_elements, dice);
 window.scorecard = scorecard;
 
 //---------Event Handlers-------//
 function reserve_die_handler(event) {
   console.log("Trying to reserve " + event.target.id);
-  dice.reserve(document.getElementById(event.target.id));
+  if (event.target.src.indexOf("blank") !== -1) {
+    display_feedback("Cannot reserve blank die", "bad");
+  } else if (dice.get_rolls_remaining() === 0) {
+    display_feedback("Cannot reserve die without rolls remaining", "bad");
+  } else {
+    dice.reserve(event.target);
+    display_feedback("Reserved die", "good");
+  }
 }
 
 function roll_dice_handler() {
@@ -54,8 +62,16 @@ function enter_score_handler(event) {
     event.target.disabled = true;
     scorecard.update_scores();
     dice.reset();
+    display_feedback("Valid entry", "good");
+  } else {
+    display_feedback("Invalid entry", "bad");
   }
 }
 
 //------Feedback ---------//
-function display_feedback(message, context) {}
+function display_feedback(message, context) {
+  feedback.innerHTML = message;
+  feedback.classList.remove("good");
+  feedback.classList.remove("bad");
+  feedback.classList.add(context);
+}
