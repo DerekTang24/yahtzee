@@ -1,3 +1,5 @@
+const fetch = require("node-fetch");
+
 console.log("UI.js connected");
 import Dice from "./Dice.js";
 import Scorecard from "./Scorecard.js";
@@ -62,6 +64,7 @@ function enter_score_handler(event) {
     event.target.disabled = true;
     scorecard.update_scores();
     dice.reset();
+    dice_elements.forEach((e) => e.classList.remove("reserved"));
     display_feedback("Valid entry", "good");
   } else {
     display_feedback("Invalid entry", "bad");

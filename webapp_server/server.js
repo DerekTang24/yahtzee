@@ -127,12 +127,19 @@ app.get("/games/:game_name/:username", async function (request, response) {
     request.params
   ); //event logging
 
+  const url = `http://127.0.0.1:5000/games/scorecards/${game_name}`;
+  const res = await fetch(url);
+  const scorecard_details = JSON.parse(await res.text());
+  const scorecard = scorecard_details[0].score_info;
+  console.log(scorecard_details);
+
   response.status(200);
   response.setHeader("Content-Type", "text/html");
   response.render("game/game", {
     feedback: "",
     username,
     game_name,
+    scorecard,
   });
 });
 

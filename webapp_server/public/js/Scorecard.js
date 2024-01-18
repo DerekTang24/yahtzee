@@ -61,9 +61,9 @@ class Scorecard {
           return false;
         }
         if (
-          dice_counts == [1, 1, 1, 1, 0, 0] ||
-          dice_counts == [0, 1, 1, 1, 1, 0] ||
-          dice_counts == [0, 0, 1, 1, 1, 1]
+          dice_counts.slice(0, 4).every((e) => e > 0) ||
+          dice_counts.slice(1, 5).every((e) => e > 0) ||
+          dice_counts.slice(2, 6).every((e) => e > 0)
         ) {
           return true;
         } else {
@@ -74,8 +74,8 @@ class Scorecard {
           return false;
         }
         if (
-          dice_counts == [1, 1, 1, 1, 1, 0] ||
-          dice_counts == [0, 1, 1, 1, 1, 1]
+          dice_counts.slice(0, 5).every((e) => e > 0) ||
+          dice_counts.slice(1, 6).every((e) => e > 0)
         ) {
           return true;
         } else {

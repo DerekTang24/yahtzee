@@ -11,7 +11,7 @@ username:username, game_name:game_name}) -%>
       <td><img id="die_4" class="die" src="/images/blank.svg" width="70" /></td>
     </tr>
     <tr>
-      <td colspan="3">Rolls remaining: <span id="rolls_remaining">3</span></td>
+      <td colspan="3">Rolls remaining: <span id="rolls_remaining"><3></span></td>
       <td colspan="2">
         <button id="roll_button" type="button">Roll the Dice!</button>
       </td>
@@ -29,14 +29,21 @@ username:username, game_name:game_name}) -%>
       <th>HOW TO SCORE</th>
       <th>#1</th>
     </tr>
+    <% for (const num of ["ones", "twos", "threes", "fours", "fives", "sixes"]) {
+      const numbers = {"ones": "one", "twos": "two", "threes": "three", "fours": "four", "fives": "five", "sixes": "six"} %>
     <tr>
-      <td>one <img src="/images/one.svg" width="20" /> =1</td>
-      <td>Count and Add Only one</td>
+      <td><%=numbers.num%> <img src="/images/<%=numbers[num]%>.svg" width="20" /></td>
+      <td>Count and Add Only <%=num%></td>
       <td>
-        <input type="text" class="upper category" id="one_input" size="3" />
+        <input type="text" class="upper category" id="<%=numbers.num %>_input" size="3">
+        <% if (scorecard.upper.num !== -1) { %>
+          <%=scorecard.upper.num%>
+        <% } %>
+      </input>
       </td>
     </tr>
-    <tr>
+    <% } %>
+    <!-- <tr>
       <td>two <img src="/images/two.svg" width="20" /> =2</td>
       <td>Count and Add Only two</td>
       <td>
@@ -71,7 +78,7 @@ username:username, game_name:game_name}) -%>
         <input type="text" class="upper category" id="six_input" size="3" />
       </td>
     </tr>
-    <tr>
+    <tr> -->
       <td>TOTAL SCORE</td>
       <td>--</td>
       <td class="upper score" id="upper_score"></td>
