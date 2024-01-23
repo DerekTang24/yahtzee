@@ -34,7 +34,7 @@ class Scorecard:
             db_connection = sqlite3.connect(self.db_name)
             cursor = db_connection.cursor()
             score_info = {
-                "dice_rolls": 0,
+                "dice_rolls": 3,
                 "upper": {
                     "ones": -1,
                     "twos": -1,

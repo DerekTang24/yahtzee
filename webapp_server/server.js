@@ -127,12 +127,22 @@ app.get("/games/:game_name/:username", async function (request, response) {
     request.params
   ); //event logging
 
+  const url = `http://127.0.0.1:5000/games/scorecards/${game_name}`;
+  const res = await fetch(url);
+  const scorecard_details = JSON.parse(await res.text());
+  const scorecard_id = scorecard_details[0].id;
+  const scorecard = scorecard_details[0].score_info;
+  console.log(scorecard.upper, scorecard.lower);
+  console.log(scorecard_details);
+
   response.status(200);
   response.setHeader("Content-Type", "text/html");
   response.render("game/game", {
     feedback: "",
     username,
     game_name,
+    scorecard,
+    scorecard_id,
   });
 });
 
@@ -387,6 +397,33 @@ app.post("/games", async function (request, response) {
   response.setHeader("Content-Type", "text/html");
   response.redirect("/games/" + username);
 }); //POST /games
+
+app.post("/scorecards/:scorecard_id", async function (request, response) {
+  console.log(request.method, request.url, request.body); //event logging
+  const scorecard_id = request.params.scorecard_id;
+
+  //Get game information from body of POST request
+  const score_info = request.body;
+
+  // HEADs UP: You really need to validate this information!
+  console.log("Info recieved:", score_info, score_info.upper, score_info.lower);
+
+  const url = "http://127.0.0.1:5000/scorecards/" + scorecard_id;
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: headers,
+    body: JSON.stringify(score_info),
+  });
+
+  response.status(200);
+  response.setHeader("Content-Type", "text/html");
+  response.send({
+    message: "scorecard updated",
+  });
+}); //POST /scorecards
 
 // Because routes/middleware are applied in order,
 // this will act as a default error route in case of

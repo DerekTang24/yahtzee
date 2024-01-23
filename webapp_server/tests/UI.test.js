@@ -474,6 +474,13 @@ describe("Scorecard", () => {
 
   describe("4) Roll Count Tests", () => {
     it("4.1: Roll count should decrease roll count by 1 after a roll", async () => {
+      page = await browser.newPage();
+      let game_name = users[0]["username"] + "game2";
+      let username = users[0]["username"];
+      await page.goto(url_base + "/games/" + game_name + "/" + username, {
+        waitUntil: "domcontentloaded",
+      });
+
       const rollButton = await page.$("#roll_button");
       let rollsRemaining1 = await page.evaluate(
         "window.dice.get_rolls_remaining();"
@@ -562,7 +569,7 @@ describe("Scorecard", () => {
       let game_name = username + "game1";
 
       //Get scorecard id
-      let url = "httzp://127.0.0.1:5000/users/" + username;
+      let url = "http://127.0.0.1:5000/users/" + username;
       let res = await fetch(url);
       let user_info = JSON.parse(await res.text());
 

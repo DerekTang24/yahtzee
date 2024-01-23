@@ -11,7 +11,7 @@ username:username, game_name:game_name}) -%>
       <td><img id="die_4" class="die" src="/images/blank.svg" width="70" /></td>
     </tr>
     <tr>
-      <td colspan="3">Rolls remaining: <span id="rolls_remaining">3</span></td>
+      <td colspan="3">Rolls remaining: <span id="rolls_remaining"><%=parseInt(scorecard.dice_rolls)%></span></td>
       <td colspan="2">
         <button id="roll_button" type="button">Roll the Dice!</button>
       </td>
@@ -22,14 +22,24 @@ username:username, game_name:game_name}) -%>
 
 <section id="feedback"></section>
 
-<section id="scorecard">
+<section id="scorecard" scorecard_id="<%=scorecard_id%>">
   <table>
     <tr>
       <th>UPPER SECTION</th>
       <th>HOW TO SCORE</th>
       <th>#1</th>
     </tr>
+    <% for (const num of ["ones", "twos", "threes", "fours", "fives", "sixes"]) {
+      const singles = {"ones": "one", "twos": "two", "threes": "three", "fours": "four", "fives": "five", "sixes": "six"} %>
     <tr>
+      <td><%=singles[num]%> <img src="/images/<%=singles[num]%>.svg" width="20" /></td>
+      <td>Count and Add Only <%=num%></td>
+      <td>
+        <input type="text" class="upper category" id="<%=singles[num] %>_input" size="3" value="<% if (scorecard.upper[num] !== -1){%><%=scorecard.upper[num]%><%}%>" <% if (scorecard.upper[num] !== -1) {%> disabled <%}%>/>
+      </td>
+    </tr>
+    <% } %>
+    <!-- <tr>
       <td>one <img src="/images/one.svg" width="20" /> =1</td>
       <td>Count and Add Only one</td>
       <td>
@@ -70,7 +80,7 @@ username:username, game_name:game_name}) -%>
       <td>
         <input type="text" class="upper category" id="six_input" size="3" />
       </td>
-    </tr>
+    </tr> -->
     <tr>
       <td>TOTAL SCORE</td>
       <td>--</td>
@@ -91,7 +101,23 @@ username:username, game_name:game_name}) -%>
       <th></th>
       <th></th>
     </tr>
+    <% for (const cat of ["three_of_a_kind", "four_of_a_kind", "full_house", "small_straight", "large_straight", "yahtzee", "chance"]) {
+      const references = {"three_of_a_kind":{"category":"3 of a kind","scoring":"Add Total of All Dice"},
+      "four_of_a_kind":{"category":"4 of a kind","scoring":"Add Total of All Dice"},
+      "full_house":{"category":"Full House","scoring":"Score 25"},
+      "small_straight":{"category":"Small Straight (Sequence of 4)","scoring":"Score 30"},
+      "large_straight":{"category":"Large Straight (Sequence of 5)","scoring":"Score 40"},
+      "yahtzee":{"category":"Yahtzee (5 of a kind)","scoring":"Score 50"},
+      "chance":{"category":"Chance","scoring":"Score Total Of all 5 Dice"}} %>
     <tr>
+      <td><%=references[cat]["category"]%></td>
+      <td><%=references[cat]["scoring"]%></td>
+      <td>
+        <input type="text" class="lower category" id="<%=cat%>_input" size="3" value="<% if (scorecard.lower[cat] !== -1){%><%=scorecard.lower[cat]%><%}%>" <% if (scorecard.lower[cat] !== -1) {%> disabled <%}%>/>
+      </td>
+    </tr>
+    <% } %>
+    <!-- <tr>
       <td>3 of a kind</td>
       <td>Add Total of All Dice</td>
       <td>
@@ -164,7 +190,7 @@ username:username, game_name:game_name}) -%>
       <td>
         <input type="text" class="lower category" id="chance_input" size="3" />
       </td>
-    </tr>
+    </tr> -->
     <tr>
       <td>Total (Of Lower Section)</td>
       <td></td>
