@@ -43,10 +43,15 @@ username:username, game_name:game_name}) -%>
       <td>one <img src="/images/one.svg" width="20" /> =1</td>
       <td>Count and Add Only one</td>
       <td>
-        <input type="text" class="upper category" id="one_input" size="3" />
+        <input type="text" class="upper category" id="<%=numbers.num %>_input" size="3">
+        <% if (scorecard.upper.num !== -1) { %>
+          <%=scorecard.upper.num%>
+        <% } %>
+      </input>
       </td>
     </tr>
-    <tr>
+    <% } %>
+    <!-- <tr>
       <td>two <img src="/images/two.svg" width="20" /> =2</td>
       <td>Count and Add Only two</td>
       <td>

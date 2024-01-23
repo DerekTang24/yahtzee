@@ -63,6 +63,7 @@ async function enter_score_handler(event) {
     event.target.disabled = true;
     scorecard.update_scores();
     dice.reset();
+    dice_elements.forEach((e) => e.classList.remove("reserved"));
     display_feedback("Valid entry", "good");
 
     const scorecard_id = document
