@@ -14,6 +14,18 @@ username:username}) -%>
   <button id="create_button" type="submit">Create Game</button>
   
 </form>
+<form action="/games/join" method="POST">
+  <input
+    id="username_input"
+    type="hidden"
+    name="username"
+    value="<%=username%>"
+  />
+  <label for="game_name_input">Game Name:</label>
+  <input id="game_name_input" type="text" name="game_name" /> <br />
+  <button id="create_button" type="submit">Join Game</button>
+  
+</form>
 <!-- <span id="feedback"><%=feedback%></span></br> -->
 <ol class="user_games" id="user_games_ol">
   Games <% for (const game of games) { %>

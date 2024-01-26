@@ -11,7 +11,7 @@ username:username, game_name:game_name}) -%>
       <td><img id="die_4" class="die" src="/images/blank.svg" width="70" /></td>
     </tr>
     <tr>
-      <td colspan="3">Rolls remaining: <span id="rolls_remaining"><%=parseInt(scorecard.dice_rolls)%></span></td>
+      <td colspan="3">Rolls remaining: <span id="rolls_remaining"><%=scorecards.filter((e) => e.user_id === user_id)[0].score_info.dice_rolls%></span></td>
       <td colspan="2">
         <button id="roll_button" type="button">Roll the Dice!</button>
       </td>
@@ -22,37 +22,53 @@ username:username, game_name:game_name}) -%>
 
 <section id="feedback"></section>
 
-<section id="scorecard" scorecard_id="<%=scorecard_id%>">
+
+
+
+<section id="scorecard" user_id="<%user_id%>" class="<% for (const scorecard of scorecards) { %> <%=scorecard.user_id%><%}%>">
   <table>
     <tr>
       <th>UPPER SECTION</th>
       <th>HOW TO SCORE</th>
-      <th>#1</th>
+      <% for (const scorecard of scorecards) { %>
+        <th><%=scorecard.user_id%><% if (scorecard.user_id === user_id) { %> (you) <% } %></th>
+      <% } %>
     </tr>
     <% for (const num of ["ones", "twos", "threes", "fours", "fives", "sixes"]) {
       const singles = {"ones": "one", "twos": "two", "threes": "three", "fours": "four", "fives": "five", "sixes": "six"} %>
     <tr>
       <td><%=singles[num]%> <img src="/images/<%=singles[num]%>.svg" width="20" /></td>
       <td>Count and Add Only <%=num%></td>
+      <% for (const scorecard of scorecards) { %>
       <td>
-        <input type="text" class="upper category" id="<%=singles[num] %>_input" size="3" value="<% if (scorecard.upper[num] !== -1){%><%=scorecard.upper[num]%><%}%>" <% if (scorecard.upper[num] !== -1) {%> disabled <%}%>/>
+        <input type="text" class="upper category" user_id="<%=scorecard.user_id%>" scorecard_id="<%=scorecard.id%>" id="<%=singles[num] %>_input" size="3" value="<% if (scorecard.score_info.upper[num] !== -1){%><%=scorecard.score_info.upper[num]%><%}%>" <% if (scorecard.score_info.upper[num] !== -1) {%> disabled <%}%>/>
       </td>
+      <% } %>
     </tr>
     <% } %>
     <tr>
       <td>TOTAL SCORE</td>
       <td>--</td>
-      <td class="upper score" id="upper_score"></td>
+
+      <% for (const scorecard of scorecards) { %>
+        <td class="upper score" user_id="<%=scorecard.user_id%>" scorecard_id="<%=scorecard.id%>" id="upper_score"></td>
+      <% } %>
     </tr>
     <tr>
       <td>BONUS</td>
       <td>If total score is more than 63, score 35</td>
-      <td class="upper score" id="upper_bonus"></td>
+
+      <% for (const scorecard of scorecards) { %>
+        <td class="upper score" user_id="<%=scorecard.user_id%>" scorecard_id="<%=scorecard.id%>" id="upper_bonus"></td>
+      <% } %>
     </tr>
     <tr>
       <td>TOTAL</td>
       <td>of upper section</td>
-      <td class="upper score" id="upper_total"></td>
+
+      <% for (const scorecard of scorecards) { %>
+        <td class="upper score" user_id="<%=scorecard.user_id%>" scorecard_id="<%=scorecard.id%>" id="upper_total"></td>
+      <% } %>
     </tr>
     <tr>
       <th>LOWER SECTION</th>
@@ -70,28 +86,39 @@ username:username, game_name:game_name}) -%>
     <tr>
       <td><%=references[cat]["category"]%></td>
       <td><%=references[cat]["scoring"]%></td>
+
+    <% for (const scorecard of scorecards) { %>
       <td>
-        <input type="text" class="lower category" id="<%=cat%>_input" size="3" value="<% if (scorecard.lower[cat] !== -1){%><%=scorecard.lower[cat]%><%}%>" <% if (scorecard.lower[cat] !== -1) {%> disabled <%}%>/>
+        <input type="text" class="lower category" user_id="<%=scorecard.user_id%>" scorecard_id="<%=scorecard.id%>" id="<%=cat%>_input" size="3" value="<% if (scorecard.score_info.lower[cat] !== -1){%><%=scorecard.score_info.lower[cat]%><%}%>" <% if (scorecard.score_info.lower[cat] !== -1) {%> disabled <%}%>/>
       </td>
+    <% } %>
     </tr>
     <% } %>
     <tr>
       <td>Total (Of Lower Section)</td>
       <td></td>
-      <td class="lower score" id="lower_score"></td>
+      <% for (const scorecard of scorecards) { %>
+        <td class="lower score" id="lower_score" user_id="<%=scorecard.user_id%>" scorecard_id="<%=scorecard.id%>"></td>
+      <% } %>
     </tr>
     <tr>
       <td>Total (Of Upper Section)</td>
       <td></td>
-      <td class="lower score" id="upper_total_lower"></td>
+      <% for (const scorecard of scorecards) { %>
+        <td class="lower score" user_id="<%=scorecard.user_id%>" scorecard_id="<%=scorecard.id%>" id="upper_total_lower"></td>
+      <% } %>
     </tr>
     <tr>
       <td>Grand Total</td>
       <td></td>
-      <td class="lower score" id="grand_total"></td>
+      <% for (const scorecard of scorecards) { %>
+        <td class="lower score" user_id="<%=scorecard.user_id%>" scorecard_id="<%=scorecard.id%>" id="grand_total"></td>
+      <% } %>
     </tr>
   </table>
 </section>
+
+
 <section class="chat">
   <textarea class="chat" id="chat_textarea"> </textarea>
   <input type="text" class="chat" id="chat_input" />

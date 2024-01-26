@@ -101,8 +101,14 @@ class Scorecard {
   /**
    * Updates all score elements for a scorecard
    */
-  update_scores() {
-    const upper_score = this.category_elements
+  update_scores(user_id) {
+    const category_elements = this.category_elements.filter(
+      (element) => parseInt(element.getAttribute("user_id")) === user_id
+    );
+    const score_elements = this.score_elements.filter(
+      (element) => parseInt(element.getAttribute("user_id")) === user_id
+    );
+    const upper_score = category_elements
       .filter(
         (element) => element.classList.contains("upper") && element.disabled
       )
@@ -111,19 +117,20 @@ class Scorecard {
     const upper_bonus = upper_score >= 63;
     const upper_total = upper_bonus ? upper_score + 35 : upper_score;
 
-    const lower_total = this.category_elements
+    const lower_total = category_elements
       .filter(
         (element) => element.classList.contains("lower") && element.disabled
       )
       .map((element) => element.value)
       .reduce((partialSum, a) => partialSum + parseInt(a), 0);
 
-    this.score_elements[0].innerHTML = upper_score;
-    this.score_elements[1].innerHTML = upper_bonus ? 35 : "";
-    this.score_elements[2].innerHTML = upper_total;
-    this.score_elements[3].innerHTML = lower_total;
-    this.score_elements[4].innerHTML = upper_total;
-    this.score_elements[5].innerHTML = upper_total + lower_total;
+    console.log(score_elements);
+    score_elements[0].innerHTML = upper_score;
+    score_elements[1].innerHTML = upper_bonus ? 35 : "";
+    score_elements[2].innerHTML = upper_total;
+    score_elements[3].innerHTML = lower_total;
+    score_elements[4].innerHTML = upper_total;
+    score_elements[5].innerHTML = upper_total + lower_total;
   }
 
   /**
@@ -152,13 +159,16 @@ class Scorecard {
      *
      * @param {Object} gameObject the object version of the scorecard
     */
-  load_scorecard(score_info) {
+  load_scorecard(score_info, user_id) {
     this.dice.rolls_remaining_element.innerHTML = score_info.dice_rolls;
     const scores = {
       ...score_info.upper,
       ...score_info.lower,
     };
-    this.category_elements.forEach((element) => {
+    const category_elements = this.category_elements.filter(
+      (element) => parseInt(element.getAttribute("user_id")) === user_id
+    );
+    category_elements.forEach((element) => {
       const raw_id = element.id.slice(0, -6);
       //because the score_info format doesn't match the score_elements' ids
       const id = element.classList.contains("upper")
@@ -175,7 +185,7 @@ class Scorecard {
         element.disabled = true;
       }
     });
-    this.update_scores();
+    this.update_scores(user_id);
   }
 
   /**
@@ -207,11 +217,14 @@ class Scorecard {
      * @return {Object} an object version of the scorecard
      *
      */
-  to_object() {
+  to_object(user_id) {
     const dice_rolls = this.dice.rolls_remaining_element.innerHTML;
+    const category_elements = this.category_elements.filter(
+      (element) => parseInt(element.getAttribute("user_id")) === user_id
+    );
     const upper = {};
     const lower = {};
-    this.category_elements.forEach((element) => {
+    category_elements.forEach((element) => {
       const raw_id = element.id.slice(0, -6);
       if (element.classList.contains("upper")) {
         const id = raw_id === "six" ? "sixes" : raw_id + "s";

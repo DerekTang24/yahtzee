@@ -127,12 +127,22 @@ app.get("/games/:game_name/:username", async function (request, response) {
     request.params
   ); //event logging
 
+  const user_url = "http://127.0.0.1:5000/users/" + username;
+  const user_res = await fetch(user_url);
+  const user = JSON.parse(await user_res.text());
+  const user_id = user.id;
+
   const url = `http://127.0.0.1:5000/games/scorecards/${game_name}`;
   const res = await fetch(url);
   const scorecard_details = JSON.parse(await res.text());
-  const scorecard_id = scorecard_details[0].id;
-  const scorecard = scorecard_details[0].score_info;
-  console.log(scorecard.upper, scorecard.lower);
+  const scorecards = scorecard_details;
+  for (const scorecard of scorecards) {
+    console.log(
+      "filters",
+      scorecards.filter((e) => e.user_id === user_id)
+    );
+    console.log(scorecard.score_info.upper, scorecard.score_info.lower);
+  }
   console.log(scorecard_details);
 
   response.status(200);
@@ -141,8 +151,8 @@ app.get("/games/:game_name/:username", async function (request, response) {
     feedback: "",
     username,
     game_name,
-    scorecard,
-    scorecard_id,
+    scorecards,
+    user_id,
   });
 });
 
@@ -397,6 +407,56 @@ app.post("/games", async function (request, response) {
   response.setHeader("Content-Type", "text/html");
   response.redirect("/games/" + username);
 }); //POST /games
+
+app.post("/games/join", async function (request, response) {
+  console.log(request.method, request.url, request.body); //event logging
+
+  //Get game information from body of POST request
+  const username = request.body.username;
+  const game_name = request.body.game_name;
+
+  // HEADs UP: You really need to validate this information!
+  console.log("Info recieved:", username, game_name);
+
+  const game_url = "http://127.0.0.1:5000/games/" + game_name;
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  const game_res = await fetch(game_url);
+
+  const got_game = await game_res.text();
+  const game = JSON.parse(got_game);
+  // if (
+  //   game === "UNIQUE constraint failed: games.link" ||
+  //   game === "game details is of the wrong format"
+  // ) {
+  //   response.status(401);
+  //   response.setHeader("Content-Type", "text/html");
+  //   response.redirect("/games/" + username + "?feedback=invalid");
+  //   return;
+  // }
+
+  console.log("Returned game:", game);
+
+  const user_url = "http://127.0.0.1:5000/users/" + username;
+  const user_res = await fetch(user_url);
+  const user = JSON.parse(await user_res.text());
+
+  const scorecard_url = "http://127.0.0.1:5000/scorecards";
+  const scorecard_res = await fetch(scorecard_url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ game_id: game.id, user_id: user.id, turn_order: 1 }),
+  });
+
+  const posted_scorecard = await scorecard_res.text();
+  const scorecard = JSON.parse(posted_scorecard);
+  console.log("Returned scorecard:", scorecard);
+
+  response.status(200);
+  response.setHeader("Content-Type", "text/html");
+  response.redirect("/games/" + username);
+}); //POST /games/join/:username
 
 app.post("/scorecards/:scorecard_id", async function (request, response) {
   console.log(request.method, request.url, request.body); //event logging
