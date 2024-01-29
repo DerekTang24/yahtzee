@@ -14,36 +14,6 @@ app.use(express.static("public")); //specify location of static assests
 app.set("views", __dirname + "/views"); //specify location of templates
 app.set("view engine", "ejs"); //specify templating library
 
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
-
-io.on("connection", function (socket) {
-  io.emit("connection", {
-    num_total_connections: io.engine.clientsCount,
-  });
-
-  socket.on("game_connection", function (data) {
-    socket.join(data.game_name);
-    console.log(
-      "Socket game connection event:",
-      data.username,
-      io.sockets.adapter.rooms.get(data.game_name).size
-    );
-    io.to(data.game_name).emit("game_connection", {
-      username: data.username,
-      num_game_connections: io.sockets.adapter.rooms.get(data.game_name).size,
-    });
-  });
-
-  socket.on("chat", function (data) {
-    console.log("Socket chat event:", data);
-    io.to(data.game_name).emit("chat", {
-      username: data.username,
-      message: data.message,
-    });
-  });
-});
-
 //.............Define server routes..............................//
 //Express checks routes in the order in which they are defined
 app.get("/", async function (request, response) {
@@ -157,34 +127,13 @@ app.get("/games/:game_name/:username", async function (request, response) {
     request.params
   ); //event logging
 
-  const user_url = "http://127.0.0.1:5000/users/" + username;
-  const user_res = await fetch(user_url);
-  const user = JSON.parse(await user_res.text());
-  const user_id = user.id;
-
   const url = `http://127.0.0.1:5000/games/scorecards/${game_name}`;
   const res = await fetch(url);
   const scorecard_details = JSON.parse(await res.text());
-  const scorecards = scorecard_details;
-
-  const users_url = "http://127.0.0.1:5000/users";
-  const users_res = await fetch(users_url);
-  const users_details = JSON.parse(await users_res.text());
-  console.log(users_details);
-
-  const usernames = scorecards
-    .map((element) => {
-      return {
-        [element.user_id]: users_details.find((e) => e.id === element.user_id)
-          .username,
-      };
-    })
-    .reduce((acc, e) => {
-      for (const key in e) {
-        acc[key] = e[key];
-      }
-      return acc;
-    });
+  const scorecard_id = scorecard_details[0].id;
+  const scorecard = scorecard_details[0].score_info;
+  console.log(scorecard.upper, scorecard.lower);
+  console.log(scorecard_details);
 
   response.status(200);
   response.setHeader("Content-Type", "text/html");
@@ -192,9 +141,8 @@ app.get("/games/:game_name/:username", async function (request, response) {
     feedback: "",
     username,
     game_name,
-    scorecards,
-    user_id,
-    usernames,
+    scorecard,
+    scorecard_id,
   });
 });
 
@@ -450,56 +398,6 @@ app.post("/games", async function (request, response) {
   response.redirect("/games/" + username);
 }); //POST /games
 
-app.post("/games/join", async function (request, response) {
-  console.log(request.method, request.url, request.body); //event logging
-
-  //Get game information from body of POST request
-  const username = request.body.username;
-  const game_name = request.body.game_name;
-
-  // HEADs UP: You really need to validate this information!
-  console.log("Info recieved:", username, game_name);
-
-  const game_url = "http://127.0.0.1:5000/games/" + game_name;
-  const headers = {
-    "Content-Type": "application/json",
-  };
-  const game_res = await fetch(game_url);
-
-  const got_game = await game_res.text();
-  const game = JSON.parse(got_game);
-  // if (
-  //   game === "UNIQUE constraint failed: games.link" ||
-  //   game === "game details is of the wrong format"
-  // ) {
-  //   response.status(401);
-  //   response.setHeader("Content-Type", "text/html");
-  //   response.redirect("/games/" + username + "?feedback=invalid");
-  //   return;
-  // }
-
-  console.log("Returned game:", game);
-
-  const user_url = "http://127.0.0.1:5000/users/" + username;
-  const user_res = await fetch(user_url);
-  const user = JSON.parse(await user_res.text());
-
-  const scorecard_url = "http://127.0.0.1:5000/scorecards";
-  const scorecard_res = await fetch(scorecard_url, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({ game_id: game.id, user_id: user.id, turn_order: 1 }),
-  });
-
-  const posted_scorecard = await scorecard_res.text();
-  const scorecard = JSON.parse(posted_scorecard);
-  console.log("Returned scorecard:", scorecard);
-
-  response.status(200);
-  response.setHeader("Content-Type", "text/html");
-  response.redirect("/games/" + username);
-}); //POST /games/join/:username
-
 app.post("/scorecards/:scorecard_id", async function (request, response) {
   console.log(request.method, request.url, request.body); //event logging
   const scorecard_id = request.params.scorecard_id;
@@ -519,10 +417,6 @@ app.post("/scorecards/:scorecard_id", async function (request, response) {
     headers: headers,
     body: JSON.stringify(score_info),
   });
-
-  const res_details = JSON.parse(await res.text());
-
-  io.emit("update", res_details);
 
   response.status(200);
   response.setHeader("Content-Type", "text/html");
@@ -547,7 +441,6 @@ app.use("", function (request, response) {
 
 //..............Start the server...............................//
 const port = process.env.PORT || 3000;
-app.set("port", port);
-server.listen(port, function () {
+app.listen(port, function () {
   console.log("Server started at http://127.0.0.1:" + port + ".");
 });

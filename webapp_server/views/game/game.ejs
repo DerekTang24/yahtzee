@@ -1,6 +1,8 @@
 <%- include('../partials/header', {title:"Yahtzee: "+game_name+'|'+username,
 username:username, game_name:game_name}) -%>
 
+<script src="/socket.io/socket.io.js"></script>
+
 <section id="dice">
   <table>
     <tr>
@@ -31,7 +33,7 @@ username:username, game_name:game_name}) -%>
       <th>UPPER SECTION</th>
       <th>HOW TO SCORE</th>
       <% for (const scorecard of scorecards) { %>
-        <th><%=scorecard.user_id%><% if (scorecard.user_id === user_id) { %> (you) <% } %></th>
+        <th><%=usernames[scorecard.user_id]%><% if (scorecard.user_id === user_id) { %> (you) <% } %></th>
       <% } %>
     </tr>
     <% for (const num of ["ones", "twos", "threes", "fours", "fives", "sixes"]) {
@@ -119,11 +121,62 @@ username:username, game_name:game_name}) -%>
 </section>
 
 
-<section class="chat">
-  <textarea class="chat" id="chat_textarea"> </textarea>
-  <input type="text" class="chat" id="chat_input" />
-  <button type="button" class="chat" id="chat_button">Chat</button>
-</section>
+<div id="chat">
+  <textarea id="chat_display" name="chat_info" rows="10" cols="50"></textarea>
+  <br>
+  <input type="text" id="chat_message">
+  <button type="button" id="chat_button">Send Message</button>
+  <br>
+</div>
+
+<script>
+  
+  const socket = io.connect('/');//the default namespace
+  socket.emit('game_connection', {username:'<%=username%>', game_name:'<%=game_name%>'});
+
+  socket.on('game_connection', function(data) {
+      console.log(data.username+" has joined the game!")
+
+      //keep track of the current number of connected game players
+      const chat_display_element = document.getElementById('chat_display');
+      let text = " has joined the game!\n";
+      if(data.username)
+          text = data.username+text;
+
+      chat_display_element.value =  chat_display_element.value+text;
+  });
+
+  socket.on('connection', function(data) {
+      console.log("New player has connected to Yahtzee!")
+      let total_players_element = document.getElementById('total_players');
+      total_players_element.innerText = data.num_total_connections;
+  });
+
+  socket.on('chat', function(data) {
+      console.log("Chat message received from "+data.username+": "+data.message)
+      let chat_display_element = document.getElementById('chat_display');
+      let text = data.message+"\n";
+      if(data.username)
+          text = data.username+": "+text;
+
+      chat_display_element.value+=text;
+  });
+
+  socket.on('update', function(data){
+    window.scorecard.load_scorecard(data["score_info"], data["user_id"])
+  })
+
+  document.getElementById("chat_button").addEventListener('click', function(){
+    let message_data = document.getElementById("chat_message").value;
+    console.log("sending: "+message_data);
+    socket.emit('chat', {
+      username:'<%=username%>',
+      game_name:'<%=game_name%>',
+      message: message_data
+    });
+    document.getElementById("chat_message").value="";
+  });
+</script>
 
 <script src="/js/UI.js" type="module"></script>
 

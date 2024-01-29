@@ -1,0 +1,32 @@
+<%- include('../partials/header', {title:"Yahtzee: My Games",
+username:username}) -%>
+
+<h2>My Games - <%=username%></h2>
+<form action="/games" method="POST">
+  <input
+    id="username_input"
+    type="hidden"
+    name="username"
+    value="<%=username%>"
+  />
+  <label for="game_name_input">Game Name:</label>
+  <input id="game_name_input" type="text" name="game_name" /> <br />
+  <button id="create_button" type="submit">Create Game</button>
+  
+</form>
+<!-- <span id="feedback"><%=feedback%></span></br> -->
+<ol class="user_games" id="user_games_ol">
+  Games <% for (const game of games) { %>
+  <li class="user_games" id="user_game">
+    <a href="/games/<%=game %>/<%=username %>" class="user_games" id="game_link_<%=game %>"><%=game %></a>
+    <a href="/games/delete/<%=game %>/<%=username %>" class="user_games" id="delete_link_<%=game %>"><%=game %></a>
+  </li>
+  <% } %>
+</ol>
+<ol class="high_scores" id="high_scores_ol">
+  High Scores <% for (const score of scores) { %>
+  <li class="high_scores" id="high_score"><%=score %></li>
+  <% } %>
+</ol>
+<section id="feedback"><%=feedback%></section></br>
+<%- include('../partials/links') -%> <%- include('../partials/footer') -%>
